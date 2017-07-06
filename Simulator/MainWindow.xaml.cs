@@ -16,6 +16,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HelixToolkit.Wpf;
 using IronPython.Modules;
+using Microsoft.Scripting.Utils;
+using SharpDX.XInput;
+using Simulator.Serialization;
 
 namespace Simulator
 {
@@ -24,64 +27,63 @@ namespace Simulator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Teapot _teapot;
-        private Model3DWrapper _wrapper;
-
-        private Timer _timer;
+        private Controller _gamepad;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _teapot = new Teapot();
-            viewport.Children.Add(_teapot);
+            var robot = Robot.LoadFromFile(@"C:\Users\adam8\Git\DART\Simulator\Simulator\Robots\DartV1\robot.json");
 
-            _wrapper = new Model3DWrapper(_teapot, this);
+            virtualRobot.LoadRobot(robot);
 
-            _wrapper.UpdateCamera += UpdateCamera;
+            _gamepad = new Controller(UserIndex.One);
 
-            Loaded += (sender, args) => UpdateCamera(_wrapper.TransformPosition);
-
-            _timer = new Timer(0.05);
-            _timer.Elapsed += (sender, args) => _wrapper.Tick();
-            _timer.Start();
+            Timer t = new Timer(0.1);
+            t.Elapsed += TOnElapsed;
+            t.Start();
         }
 
-        private void moveForward_Click(object sender, RoutedEventArgs e)
+        private void TOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            var b = (Button) sender;
+            var state = _gamepad.GetState();
 
-            var add = b.Name.StartsWith("plus");
+            const int scaleFactor = 1;
 
+            var xvel = ProcessStick(state.Gamepad.LeftThumbY);
+            var yvel = -1*ProcessStick(state.Gamepad.LeftThumbX);
+            var zvel = ProcessStick(state.Gamepad.RightThumbY);
 
-            if (b.Name.EndsWith("X"))
-            {
-                _wrapper.Move(new Vector3D(add ? 0.1:-0.1, 0, 0));
-            }
-            else if (b.Name.EndsWith("Y"))
-            {
-                _wrapper.Move(new Vector3D(0, add ? 0.1:-0.1, 0));
-            }
-            else if (b.Name.EndsWith("Z"))
-            {
-                _wrapper.Move(new Vector3D(0, 0, add ? 0.1:-0.1));
-            }
-            else if (b.Name.EndsWith("Roll"))
-            {
-                _wrapper.Rotate(new PrincipalAxis(0, add ? 10 : -10, 0));
-            }
-            else if (b.Name.EndsWith("Vel"))
-            {
-                //_wrapper.Velocity = _wrapper.Velocity + new Vector3D(add ? 0.1 : -0.1, 0, 0);
-                _wrapper.AxisVelocity = _wrapper.AxisVelocity + new PrincipalAxis(0, add ? 1:-1, 0);
-            }
+            virtualRobot._wrapper.Velocity = new Vector3D(xvel, yvel, zvel) * scaleFactor;
+
+            var angular = ProcessStick(state.Gamepad.RightThumbX);
+
+            virtualRobot._wrapper.AxisVelocity = new PrincipalAxis(0, 0, angular);
+
+            virtualRobot._robot.MotorContoller["Left"].Thrust = (sbyte)(zvel * 127);
+            virtualRobot._robot.MotorContoller["Right"].Thrust = (sbyte)(zvel * 127);
         }
 
-        private void UpdateCamera(Point3D src)
+        private double ProcessStick(short stickValue)
         {
-            viewport.CameraController.CameraTarget = src;
-            viewport.CameraController.CameraPosition = new Point3D(src.X - 12.10, src.Y, src.Z + 3.5);
-            viewport.CameraController.CameraLookDirection = new Vector3D(1, 0, -0.2);
+            const int deadZone = 5000;
+
+            if ((stickValue > 0 && stickValue < deadZone) || (stickValue < 0 && stickValue > (-1 * deadZone)))
+                return 0;
+
+            return stickValue / (double) short.MaxValue;
+        }
+
+        private void plusVel_Click(object sender, RoutedEventArgs e)
+        {
+            virtualRobot._wrapper.Velocity += new Vector3D(1, 0, 0);
+        }
+
+        private void minusVel_Click(object sender, RoutedEventArgs e)
+        {
+            virtualRobot._wrapper.Velocity -= new Vector3D(1, 0, 0);
+
         }
     }
 }
+    

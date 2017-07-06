@@ -1,0 +1,53 @@
+{
+  "Name": "DartV1",
+  "ModelFile": "DartV1.stl",
+  "Rotations": [
+    {
+      "Vector": "1,0,0",
+      "Angle": 90.0
+    },
+    {
+      "Vector": "0,0,1",
+      "Angle": 90.0
+    }
+  ],
+  Motors: [
+	{
+	  "Key": "FrontLeft",
+	  "Vector": "-0.5,0.5,0",
+      "LabelLocation": "12,15,11",
+      "ThrustLocation": "8.877,8.365,7.955",
+	},
+	{
+	  "Key": "FrontRight",
+	  "Vector": "-0.5,-0.5,0",
+      "LabelLocation": "12,-10,11",
+      "ThrustLocation": "8.697,-3.962,7.955"
+	},
+	{
+	  "Key": "Left",
+	  "Vector": "0,0,1",
+      "LabelLocation": "3,15,11",
+      "ThrustLocation": "3.621,7.362,8.333"
+	},
+	{
+	  "Key": "Right",
+	  "Vector": "0,0,1",
+      "LabelLocation": "3,-10,11",
+      "ThrustLocation": "3.542,-2.987,8.333"
+	},
+	{
+	  "Key": "BackLeft",
+	  "Vector": "-0.5,-0.5,0",
+      "LabelLocation": "-4,15,11",
+      "ThrustLocation": "-4.357,4.464,8.073"
+	},
+	{
+	  "Key": "BackRight",
+	  "Vector": "-0.5,0.5,0",
+      "LabelLocation": "-4,-10,11",
+      "ThrustLocation": "-4.357,-0.042,8.038"
+	},
+  ],
+  "ScalingFactor": 0.05
+}
