@@ -11,6 +11,7 @@
       "Angle": 90.0
     }
   ],
+  "ModelFile": "DartV1.2.stl",
   Motors: [
 	{
 	  "Key": "FrontLeft",
