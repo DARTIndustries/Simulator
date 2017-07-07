@@ -5,7 +5,7 @@ using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using Ionic.Zip;
 using Newtonsoft.Json;
-using Simulator.Controls;
+using Simulator.HelixOnly;
 
 namespace Simulator.Serialization
 {
@@ -16,6 +16,10 @@ namespace Simulator.Serialization
         public string Name { get; set; }
 
         public MotorContoller MotorContoller { get; set; }
+
+        public Point3D CenterOfMass { get; set; }
+
+        public int Mass { get; set; }
 
         public static Robot LoadFromFile(string path)
         {
@@ -76,9 +80,12 @@ namespace Simulator.Serialization
             {
                 Model = model,
                 Name = cfg.Name,
-                MotorContoller = controller
+                MotorContoller = controller,
+                CenterOfMass = cfg.CenterOfMass,
+                Mass = cfg.Mass
             };
         }
+
     }
 
     public class RobotConfig
@@ -92,6 +99,10 @@ namespace Simulator.Serialization
         public List<MotorConfiguration> Motors { get; set; }
 
         public double ScalingFactor { get; set; }
+
+        public Point3D CenterOfMass { get; set; }
+
+        public int Mass { get; set; }
     }
 
     public struct Rotation

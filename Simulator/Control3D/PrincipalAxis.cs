@@ -1,4 +1,4 @@
-﻿namespace Simulator
+﻿namespace Simulator.HelixOnly
 {
     public struct PrincipalAxis
     {
@@ -69,6 +69,9 @@
             return axis * (1.0 / scalar);
         }
 
-
+        public override string ToString()
+        {
+            return $"Pitch: {Pitch}, Roll: {Roll}, Yaw: {Yaw}";
+        }
     }
 }

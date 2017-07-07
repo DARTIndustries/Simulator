@@ -1,10 +1,11 @@
-﻿<Window xmlns:Controls="clr-namespace:Simulator.Controls"  x:Class="Simulator.MainWindow"
+﻿<Window x:Class="Simulator.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         xmlns:local="clr-namespace:Simulator"
+        xmlns:helixOnly="clr-namespace:Simulator.HelixOnly"
         mc:Ignorable="d"
         Title="MainWindow" Height="645.2" Width="1089.934">
     <Grid>
@@ -13,7 +14,7 @@
             <ColumnDefinition Width="131*"/>
         </Grid.ColumnDefinitions>
 
-        <Controls:VirtualRobot x:Name="virtualRobot" />
+        <helixOnly:VirtualRobot x:Name="virtualRobot" />
 
         <Button x:Name="plusX" Content="+X" Grid.Column="1" HorizontalAlignment="Left" Margin="26,18,0,0" VerticalAlignment="Top" Width="35"/>
         <Button x:Name="minusX" Content="-X" Grid.Column="1" HorizontalAlignment="Left" Margin="66,18,0,0" VerticalAlignment="Top" Width="35"/>
@@ -26,7 +27,7 @@
 
         <Button x:Name="plusRoll" Content="+Roll" Grid.Column="1" HorizontalAlignment="Left" Margin="26,147,0,0" VerticalAlignment="Top" Width="35"/>
         <Button x:Name="minusRoll" Content="-Roll" Grid.Column="1" HorizontalAlignment="Left" Margin="66,147,0,0" VerticalAlignment="Top" Width="35"/>
-        <Button x:Name="plusVel" Content="+X_Vel" Grid.Column="1" HorizontalAlignment="Left" Margin="26,184,0,0" VerticalAlignment="Top" Width="35" Click="plusVel_Click" />
-        <Button x:Name="minusVel" Content="-X_Vel" Grid.Column="1" HorizontalAlignment="Left" Margin="66,184,0,0" VerticalAlignment="Top" Width="35" Click="minusVel_Click" />
+        <Button x:Name="plusVel" Content="+X_Vel" Grid.Column="1" HorizontalAlignment="Left" Margin="26,184,0,0" VerticalAlignment="Top" Width="35" />
+        <Button x:Name="minusVel" Content="-X_Vel" Grid.Column="1" HorizontalAlignment="Left" Margin="66,184,0,0" VerticalAlignment="Top" Width="35"/>
     </Grid>
 </Window>

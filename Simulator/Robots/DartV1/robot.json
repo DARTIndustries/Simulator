@@ -49,5 +49,7 @@
       "ThrustLocation": "-4.357,-0.042,8.038"
 	},
   ],
-  "ScalingFactor": 0.05
+  "ScalingFactor": 0.05,
+  "CenterOfMass": "4.330,2.221,4.291",
+  "Mass": 1000
 }

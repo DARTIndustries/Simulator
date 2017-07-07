@@ -18,6 +18,7 @@ using HelixToolkit.Wpf;
 using IronPython.Modules;
 using Microsoft.Scripting.Utils;
 using SharpDX.XInput;
+using Simulator.HelixOnly;
 using Simulator.Serialization;
 
 namespace Simulator
@@ -50,18 +51,37 @@ namespace Simulator
 
             const int scaleFactor = 1;
 
-            var xvel = ProcessStick(state.Gamepad.LeftThumbY);
-            var yvel = -1*ProcessStick(state.Gamepad.LeftThumbX);
-            var zvel = ProcessStick(state.Gamepad.RightThumbY);
+            Dispatcher.Invoke(() =>
+            {
+                virtualRobot.Tick();
 
-            virtualRobot._wrapper.Velocity = new Vector3D(xvel, yvel, zvel) * scaleFactor;
 
-            var angular = ProcessStick(state.Gamepad.RightThumbX);
+                virtualRobot._robot.MotorContoller["FrontLeft"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
+                virtualRobot._robot.MotorContoller["FrontRight"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
+                virtualRobot._robot.MotorContoller["BackLeft"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
+                virtualRobot._robot.MotorContoller["BackRight"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
 
-            virtualRobot._wrapper.AxisVelocity = new PrincipalAxis(0, 0, angular);
 
-            virtualRobot._robot.MotorContoller["Left"].Thrust = (sbyte)(zvel * 127);
-            virtualRobot._robot.MotorContoller["Right"].Thrust = (sbyte)(zvel * 127);
+                var flipLeft = (((state.Gamepad.Buttons & GamepadButtonFlags.LeftShoulder) != 0) ? -1 : 1);
+                var flipRight = (((state.Gamepad.Buttons & GamepadButtonFlags.RightShoulder) != 0) ? -1 : 1);
+
+                virtualRobot._robot.MotorContoller["Left"].Thrust =
+                    (sbyte) (127.0 * ProcessTrigger(state.Gamepad.LeftTrigger) * flipLeft);
+
+                virtualRobot._robot.MotorContoller["Right"].Thrust =
+                    (sbyte) (127.0 * ProcessTrigger(state.Gamepad.RightTrigger) * flipRight);
+
+            });
+        }
+
+        private double ProcessTrigger(byte triggerValue)
+        {
+            const int deadZone = 10;
+
+            if (triggerValue < deadZone)
+                return 0;
+
+            return triggerValue / (double)byte.MaxValue;
         }
 
         private double ProcessStick(short stickValue)
@@ -72,17 +92,6 @@ namespace Simulator
                 return 0;
 
             return stickValue / (double) short.MaxValue;
-        }
-
-        private void plusVel_Click(object sender, RoutedEventArgs e)
-        {
-            virtualRobot._wrapper.Velocity += new Vector3D(1, 0, 0);
-        }
-
-        private void minusVel_Click(object sender, RoutedEventArgs e)
-        {
-            virtualRobot._wrapper.Velocity -= new Vector3D(1, 0, 0);
-
         }
     }
 }
