@@ -80,27 +80,38 @@ namespace Simulator.Control3D
         {
             _body = body;
             Drag = 0.98;
+            Rotation = true;
+            Movement = true;
         }
 
         public double Drag { get; set; }
+
+        public bool Movement { get; set; }
+
+        public bool Rotation { get; set; }
 
         public void ApplyForce(Point3D emitter, Vector3D force)
         {
             const double transScaling = 10.0;
             const double rotScaling = 100.0;
 
+            if (Movement)
+            {
+                Acceleration += transScaling * force / _body.Mass;
+            }
 
-            Acceleration += transScaling * force / _body.Mass;
+            if (Rotation)
+            {
+                var d = emitter - _body.CenterOfMass;
 
-            var d = emitter - _body.CenterOfMass;
-
-            var t = Vector3D.CrossProduct(d, force);
+                var t = Vector3D.CrossProduct(d, force);
 
 
-            RotationalAcceleration += new PrincipalAxis(
-                rotScaling * t.Y / _body.MomentOfInertia(Axis.Y),
-                rotScaling * t.X / _body.MomentOfInertia(Axis.X),
-                rotScaling * t.Z / _body.MomentOfInertia(Axis.Z));
+                RotationalAcceleration += new PrincipalAxis(
+                    rotScaling * t.Y / _body.MomentOfInertia(Axis.Y),
+                    rotScaling * t.X / _body.MomentOfInertia(Axis.X),
+                    rotScaling * t.Z / _body.MomentOfInertia(Axis.Z));
+            }
         }
 
         public Vector3D Acceleration { get; set; }
@@ -114,24 +125,29 @@ namespace Simulator.Control3D
 
         public void Tick()
         {
-            // Add current acceleration to velocity
-            Velocity += Acceleration;
+            if (Movement)
+            {
+                // Add current acceleration to velocity
+                Velocity += Acceleration;
 
-            // Apply the drag
-            Velocity *= Drag;
+                // Apply the drag
+                Velocity *= Drag;
 
-            // Move the current velocity
-            _body.Move(Velocity);
+                // Move the current velocity
+                _body.Move(Velocity);
+            }
 
-            // Add the current RotationalAcceleration to Rotational Velocity
-            RotationalVelocity += RotationalAcceleration;
+            if (Rotation)
+            {
+                // Add the current RotationalAcceleration to Rotational Velocity
+                RotationalVelocity += RotationalAcceleration;
 
-            // Apply drag
-            RotationalVelocity *= Drag;
+                // Apply drag
+                RotationalVelocity *= Drag;
 
-            // Rotate around the CoM
-            _body.Rotate(RotationalVelocity, _body.CenterOfMass);
-
+                // Rotate around the CoM
+                _body.Rotate(RotationalVelocity, _body.CenterOfMass);
+            }
 
             //Clear the acceleration, but not velocity
             Acceleration = default(Vector3D);
