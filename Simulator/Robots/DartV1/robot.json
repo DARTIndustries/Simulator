@@ -1,16 +1,5 @@
 {
   "Name": "DartV1",
-  "ModelFile": "DartV1.stl",
-  "Rotations": [
-    {
-      "Vector": "1,0,0",
-      "Angle": 90.0
-    },
-    {
-      "Vector": "0,0,1",
-      "Angle": 90.0
-    }
-  ],
   "ModelFile": "DartV1.2.stl",
   Motors: [
 	{
@@ -50,7 +39,6 @@
       "ThrustLocation": "-4.357,-0.042,8.038"
 	},
   ],
-  "ScalingFactor": 0.05,
   "CenterOfMass": "4.330,2.221,4.291",
   "Mass": 1000
 }

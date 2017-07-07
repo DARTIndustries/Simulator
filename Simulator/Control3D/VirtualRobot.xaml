@@ -1,15 +1,14 @@
-﻿<UserControl x:Class="Simulator.HelixOnly.VirtualRobot"
+﻿<UserControl x:Class="Simulator.Control3D.VirtualRobot"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Util="clr-namespace:Simulator.Util"
+             xmlns:util="clr-namespace:Simulator.Util"
              xmlns:h="http://helix-toolkit.org/wpf"
              mc:Ignorable="d" MinHeight="300" MinWidth="300">
     <Grid>
-        <h:HelixViewport3D x:Name="viewport" Background="CornflowerBlue" CalculateCursorPosition="True" PreviewMouseRightButtonDown="viewport_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="viewport_PreviewMouseRightButtonUp" ShowFrameRate="True" ShowCoordinateSystem="True" >
-        </h:HelixViewport3D>
-        <StackPanel Visibility="{x:Static Util:DebugMode.DebugVisibility}" Orientation="Horizontal">
+        <h:HelixViewport3D x:Name="viewport" Background="CornflowerBlue" CalculateCursorPosition="True" PreviewMouseRightButtonDown="viewport_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="viewport_PreviewMouseRightButtonUp" ShowFrameRate="True" ShowCoordinateSystem="True" IsMoveEnabled="False" />
+        <StackPanel Visibility="{x:Static util:DebugMode.DebugVisibility}" Orientation="Horizontal">
 
             <Grid x:Name="CursorPositionBlock" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" Margin="10,0,0,0"  Opacity="1" IsHitTestVisible="True">
                 <Grid.ColumnDefinitions>

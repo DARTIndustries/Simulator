@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         xmlns:local="clr-namespace:Simulator"
-        xmlns:helixOnly="clr-namespace:Simulator.HelixOnly"
+        xmlns:control3D="clr-namespace:Simulator.Control3D"
         mc:Ignorable="d"
         Title="MainWindow" Height="645.2" Width="1089.934">
     <Grid>
@@ -14,20 +14,9 @@
             <ColumnDefinition Width="131*"/>
         </Grid.ColumnDefinitions>
 
-        <helixOnly:VirtualRobot x:Name="virtualRobot" />
-
-        <Button x:Name="plusX" Content="+X" Grid.Column="1" HorizontalAlignment="Left" Margin="26,18,0,0" VerticalAlignment="Top" Width="35"/>
-        <Button x:Name="minusX" Content="-X" Grid.Column="1" HorizontalAlignment="Left" Margin="66,18,0,0" VerticalAlignment="Top" Width="35"/>
-
-        <Button x:Name="plusY" Content="+Y" Grid.Column="1" HorizontalAlignment="Left" Margin="26,53,0,0" VerticalAlignment="Top" Width="35" />
-        <Button x:Name="minusY" Content="-Y" Grid.Column="1" HorizontalAlignment="Left" Margin="66,53,0,0" VerticalAlignment="Top" Width="35"/>
-
-        <Button x:Name="plusZ" Content="+Z" Grid.Column="1" HorizontalAlignment="Left" Margin="26,88,0,0" VerticalAlignment="Top" Width="35"/>
-        <Button x:Name="minusZ" Content="-Z" Grid.Column="1" HorizontalAlignment="Left" Margin="66,88,0,0" VerticalAlignment="Top" Width="35"/>
-
-        <Button x:Name="plusRoll" Content="+Roll" Grid.Column="1" HorizontalAlignment="Left" Margin="26,147,0,0" VerticalAlignment="Top" Width="35"/>
-        <Button x:Name="minusRoll" Content="-Roll" Grid.Column="1" HorizontalAlignment="Left" Margin="66,147,0,0" VerticalAlignment="Top" Width="35"/>
-        <Button x:Name="plusVel" Content="+X_Vel" Grid.Column="1" HorizontalAlignment="Left" Margin="26,184,0,0" VerticalAlignment="Top" Width="35" />
-        <Button x:Name="minusVel" Content="-X_Vel" Grid.Column="1" HorizontalAlignment="Left" Margin="66,184,0,0" VerticalAlignment="Top" Width="35"/>
+        <control3D:VirtualRobot x:Name="virtualRobot" />
+        <Button Content="Begin Tick" Grid.Column="1" HorizontalAlignment="Left" Margin="83,10,0,0" VerticalAlignment="Top" Width="75" Click="StartTick"/>
+        <Button Content="Single Tick" Grid.Column="1" HorizontalAlignment="Left" Margin="83,37,0,0" VerticalAlignment="Top" Width="75" Click="SingleTick"/>
+        <Slider Grid.Column="1" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top" Width="236" Maximum="1000" Minimum="1" SmallChange="1" LargeChange="100" TickFrequency="100" Height="42" TickPlacement="TopLeft" Value="33" ValueChanged="Slider_ValueChanged"/>
     </Grid>
 </Window>

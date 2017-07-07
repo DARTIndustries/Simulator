@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media.Media3D;
 
-namespace Simulator.HelixOnly
+namespace Simulator.Control3D
 {
     public class MotorContoller : IEnumerable<Motor>
     {

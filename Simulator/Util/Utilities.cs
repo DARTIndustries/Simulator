@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Media3D;
-using Simulator.HelixOnly;
+using BulletSharp.Math;
+using Simulator.Control3D;
+using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 namespace Simulator.Util
 {
@@ -83,13 +85,32 @@ namespace Simulator.Util
             model.Transform = new MatrixTransform3D(matrix);
         }
 
-        public static double Distance(Point3D p1, Point3D p2)
+        public static Vector3D ToMedia3D(this Vector3 v)
         {
-            double deltaX = p1.X - p2.X;
-            double deltaY = p1.Y - p2.Y;
-            double deltaZ = p1.Z - p2.Z;
+            return new Vector3D(v.X, v.Y, v.Z);
+        }
 
-            return Math.Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        public static Vector3 ToBullet(this Vector3D v)
+        {
+            return new Vector3((float)v.X, (float)v.Y, (float)v.Z);
+        }
+
+        public static Matrix3D ToMedia3D(this Matrix v)
+        {
+            return new Matrix3D(
+                v.M11, v.M12, v.M13, v.M14,
+                v.M21, v.M22, v.M23, v.M24,
+                v.M31, v.M32, v.M33, v.M34,
+                v.M41, v.M42, v.M43, v.M44);
+        }
+
+        public static Matrix ToBullet(this Matrix3D v)
+        {
+            return new Matrix(
+                (float)v.M11, (float)v.M12, (float)v.M13, (float)v.M14,
+                (float)v.M21, (float)v.M22, (float)v.M23, (float)v.M24,
+                (float)v.M31, (float)v.M32, (float)v.M33, (float)v.M34,
+                (float)v.OffsetX, (float)v.OffsetY, (float)v.OffsetZ, (float)v.M44);
         }
 
     }

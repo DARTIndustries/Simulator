@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using Ionic.Zip;
 using Newtonsoft.Json;
-using Simulator.HelixOnly;
+using Simulator.Serialization;
 
-namespace Simulator.Serialization
+namespace Simulator.Control3D
 {
     public class Robot
     {
@@ -53,18 +52,6 @@ namespace Simulator.Serialization
             else
                 throw new FormatException();
 
-
-            var matrix = model.Transform.Value;
-
-            matrix.Scale(new Vector3D(cfg.ScalingFactor, cfg.ScalingFactor, cfg.ScalingFactor));
-
-            foreach (var cfgRotation in cfg.Rotations)
-            {
-                matrix.Rotate(new Quaternion(cfgRotation.Vector, cfgRotation.Angle));
-            }
-
-            model.Transform = new MatrixTransform3D(matrix);
-
             var controller = new MotorContoller();
 
             foreach (var motor in cfg.Motors)
@@ -86,39 +73,5 @@ namespace Simulator.Serialization
             };
         }
 
-    }
-
-    public class RobotConfig
-    {
-        public string Name { get; set; }
-
-        public string ModelFile { get; set; }
-
-        public List<Rotation> Rotations { get; set; }
-
-        public List<MotorConfiguration> Motors { get; set; }
-
-        public double ScalingFactor { get; set; }
-
-        public Point3D CenterOfMass { get; set; }
-
-        public int Mass { get; set; }
-    }
-
-    public struct Rotation
-    {
-        public Vector3D Vector { get; set; }
-        public double Angle { get; set; }
-    }
-
-    public struct MotorConfiguration
-    {
-        public string Key { get; set; }
-
-        public Vector3D Vector { get; set; }
-
-        public Point3D LabelLocation { get; set; }
-
-        public Point3D ThrustLocation { get; set; }
     }
 }

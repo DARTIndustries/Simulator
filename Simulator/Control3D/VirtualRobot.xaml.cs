@@ -8,12 +8,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
-using Microsoft.Scripting.Utils;
-using Simulator.Control3D;
-using Simulator.Serialization;
+using Simulator.Control3D.Physics;
 using Simulator.Util;
 
-namespace Simulator.HelixOnly
+namespace Simulator.Control3D
 {
     /// <summary>
     /// Interaction logic for VirtualRobot.xaml
@@ -23,8 +21,7 @@ namespace Simulator.HelixOnly
         private Timer _timer;
         private Dictionary<string, ArrowVisual3D> _thrustArrows;
         public Robot _robot;
-        private PhysicsModelGroup _modelGroup;
-        public PhysicsSimulator _physics;
+        public IPhysicsSimulator _physics;
 
         public VirtualRobot()
         {
@@ -42,7 +39,10 @@ namespace Simulator.HelixOnly
         public void BeginInternalTick()
         {
             _timer = new Timer(0.05);
-            _timer.Elapsed += (sender, args) => Tick();
+            _timer.Elapsed += (sender, args) =>
+            {
+                //Tick()
+            };
             _timer.Start();
         }
 
@@ -64,7 +64,7 @@ namespace Simulator.HelixOnly
 
         #endregion
 
-        public void Tick()
+        public void Tick(TimeSpan delta)
         {
             foreach (var key in _robot.MotorContoller.Keys)
             {
@@ -84,20 +84,20 @@ namespace Simulator.HelixOnly
                     arrow.Visible = true;
                     arrow.Material = new DiffuseMaterial(Brushes.Green);
                     arrow.Point1 = m.ThrustLocation;
-                    arrow.Point2 = m.ThrustLocation + ((Math.Abs(m.Thrust) / 127.0 * ArrowScale) * m.Direction);
+                    arrow.Point2 = m.ThrustLocation + ((Math.Abs((int)m.Thrust) / 127.0 * ArrowScale) * m.Direction);
                 }
                 else if (m.Thrust < 0)
                 {
                     arrow.Visible = true;
                     arrow.Material = new DiffuseMaterial(Brushes.Blue);
                     arrow.Point2 = m.ThrustLocation;
-                    arrow.Point1 = m.ThrustLocation + ((Math.Abs(m.Thrust) / 127.0 * ArrowScale) * m.Direction);
+                    arrow.Point1 = m.ThrustLocation + ((Math.Abs((int)m.Thrust) / 127.0 * ArrowScale) * m.Direction);
                 }
             }
 
-            viewport.CameraController.CameraTarget = _robot.Model.Transform.Value.Transform(_robot.CenterOfMass);
+            //viewport.CameraController.CameraTarget = _robot.Model.Transform.Value.Transform(_robot.CenterOfMass);
 
-            _physics.Tick();
+            _physics.Tick(delta);
         }
 
         public void LoadRobot(Robot robot)
@@ -146,14 +146,15 @@ namespace Simulator.HelixOnly
             }
 
 
-            _modelGroup = new PhysicsModelGroup(_robot.Mass, _robot.CenterOfMass, _robot.Model.Bounds);
+            _physics = new BulletPhysicsSimulator();
+            var bullet = ((BulletPhysicsSimulator) _physics);
 
-            _modelGroup.Add(_robot.Model);
-            _modelGroup.AddRange(_thrustArrows.Values.Select(x => x.Model));
-
-            _physics = new PhysicsSimulator(_modelGroup);
-
-            //viewport.CameraController.CameraTarget = _robot.CenterOfMass;
+            var info = new PhysicsInfo(){ CenterOfMass = _robot.CenterOfMass, Mass = _robot.Mass};
+            bullet.AddBody(_robot.Model, info);
+            foreach (var thrustArrowsValue in _thrustArrows.Values)
+            {
+                bullet.AddBody(thrustArrowsValue.Model, info);
+            }
         }
 
         private void PositionUpdated(Size3D modelSize, Point3D src, Vector3D offset)
@@ -169,8 +170,6 @@ namespace Simulator.HelixOnly
             {
                 Overlay.SetPosition3D(overlayChild, Overlay.GetPosition3D(overlayChild) + offset);
             }
-
-
         }
 
         #region Labels

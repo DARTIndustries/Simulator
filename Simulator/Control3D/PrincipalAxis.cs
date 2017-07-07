@@ -1,4 +1,4 @@
-﻿namespace Simulator.HelixOnly
+﻿namespace Simulator.Control3D
 {
     public struct PrincipalAxis
     {

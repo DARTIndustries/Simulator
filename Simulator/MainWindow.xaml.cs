@@ -18,7 +18,7 @@ using HelixToolkit.Wpf;
 using IronPython.Modules;
 using Microsoft.Scripting.Utils;
 using SharpDX.XInput;
-using Simulator.HelixOnly;
+using Simulator.Control3D;
 using Simulator.Serialization;
 
 namespace Simulator
@@ -29,49 +29,91 @@ namespace Simulator
     public partial class MainWindow : Window
     {
         private Controller _gamepad;
+        private Timer _timer;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            var robot = Robot.LoadFromFile(@"C:\Users\adam8\Git\DART\Simulator\Simulator\Robots\DartV1\robot.json");
+            var robot = Robot.LoadFromFile(@"..\..\Robots\DartV1\robot.json");
 
             virtualRobot.LoadRobot(robot);
 
             _gamepad = new Controller(UserIndex.One);
 
-            Timer t = new Timer(0.1);
-            t.Elapsed += TOnElapsed;
-            t.Start();
+            _timer = new Timer(1);
+            _timer.Elapsed += TOnElapsed;
         }
 
+
+        private DateTime _lastTime = DateTime.Now;
         private void TOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            var state = _gamepad.GetState();
+            var controller = virtualRobot._robot.MotorContoller;
 
-            const int scaleFactor = 1;
-
-            Dispatcher.Invoke(() =>
+            TimeSpan diff;
+            if (elapsedEventArgs != null)
             {
-                virtualRobot.Tick();
+                diff = elapsedEventArgs.SignalTime - _lastTime;
+                _lastTime = elapsedEventArgs.SignalTime;
+            }
+            else
+            {
+                diff = new TimeSpan(0, 0, 0, 0, (int)_timer.Interval);
+            }
+
+            if (_gamepad.IsConnected)
+            {
+                var state = _gamepad.GetState();
+
+                const int scaleFactor = 1;
+
+                Dispatcher.Invoke(() =>
+                {
+                    virtualRobot.Tick(diff);
+
+                    controller["FrontLeft"].Thrust =
+                        (sbyte) (127.0 * ProcessStick(state.Gamepad.LeftThumbY));
+                    controller["FrontRight"].Thrust =
+                        (sbyte) (127.0 * ProcessStick(state.Gamepad.LeftThumbY));
+                    controller["BackLeft"].Thrust =
+                        (sbyte) (127.0 * ProcessStick(state.Gamepad.LeftThumbY));
+                    controller["BackRight"].Thrust =
+                        (sbyte) (127.0 * ProcessStick(state.Gamepad.LeftThumbY));
 
 
-                virtualRobot._robot.MotorContoller["FrontLeft"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
-                virtualRobot._robot.MotorContoller["FrontRight"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
-                virtualRobot._robot.MotorContoller["BackLeft"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
-                virtualRobot._robot.MotorContoller["BackRight"].Thrust = (sbyte)(127.0 * ProcessStick(state.Gamepad.LeftThumbY));
+                    var flipLeft = (((state.Gamepad.Buttons & GamepadButtonFlags.LeftShoulder) != 0) ? -1 : 1);
+                    var flipRight = (((state.Gamepad.Buttons & GamepadButtonFlags.RightShoulder) != 0) ? -1 : 1);
 
+                    controller["Left"].Thrust =
+                        (sbyte) (127.0 * ProcessTrigger(state.Gamepad.LeftTrigger) * flipLeft);
 
-                var flipLeft = (((state.Gamepad.Buttons & GamepadButtonFlags.LeftShoulder) != 0) ? -1 : 1);
-                var flipRight = (((state.Gamepad.Buttons & GamepadButtonFlags.RightShoulder) != 0) ? -1 : 1);
+                    controller["Right"].Thrust =
+                        (sbyte) (127.0 * ProcessTrigger(state.Gamepad.RightTrigger) * flipRight);
 
-                virtualRobot._robot.MotorContoller["Left"].Thrust =
-                    (sbyte) (127.0 * ProcessTrigger(state.Gamepad.LeftTrigger) * flipLeft);
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    if (Keyboard.IsKeyDown(Key.Q))
+                        controller["Left"].Thrust = SByte.MaxValue;
+                    else if (Keyboard.IsKeyDown(Key.Z))
+                        controller["Left"].Thrust = SByte.MinValue;
+                    else
+                        controller["Left"].Thrust = 0;
 
-                virtualRobot._robot.MotorContoller["Right"].Thrust =
-                    (sbyte) (127.0 * ProcessTrigger(state.Gamepad.RightTrigger) * flipRight);
+                    if (Keyboard.IsKeyDown(Key.E))
+                        controller["Right"].Thrust = SByte.MaxValue;
+                    else if (Keyboard.IsKeyDown(Key.C))
+                        controller["Right"].Thrust = SByte.MinValue;
+                    else
+                        controller["Right"].Thrust = 0;
 
-            });
+                    virtualRobot.Tick(diff);
+                });
+            }
         }
 
         private double ProcessTrigger(byte triggerValue)
@@ -92,6 +134,22 @@ namespace Simulator
                 return 0;
 
             return stickValue / (double) short.MaxValue;
+        }
+
+        private void StartTick(object sender, RoutedEventArgs e)
+        {
+            _timer.Start();
+        }
+
+        private void SingleTick(object sender, RoutedEventArgs e)
+        {
+            TOnElapsed(null, null);
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_timer != null)
+                _timer.Interval = e.NewValue;
         }
     }
 }
