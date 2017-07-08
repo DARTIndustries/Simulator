@@ -56,7 +56,6 @@ namespace Simulator.Control3D
             return normal;
         }
 
-        public Point3D LabelLocation { get; set; }
         public Point3D ThrustLocation { get; set; }
         public Vector3D Direction { get; private set; }
         public sbyte Thrust { get; set; }

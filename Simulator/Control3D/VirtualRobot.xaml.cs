@@ -18,10 +18,9 @@ namespace Simulator.Control3D
     /// </summary>
     public partial class VirtualRobot : UserControl
     {
-        private Timer _timer;
         private Dictionary<string, ArrowVisual3D> _thrustArrows;
         public Robot _robot;
-        public IPhysicsSimulator _physics;
+        public BulletPhysicsSimulator _physics;
 
         public VirtualRobot()
         {
@@ -33,37 +32,7 @@ namespace Simulator.Control3D
 
             ShowMotorLabels = true;
         }
-
-        #region Internal Timer
-
-        public void BeginInternalTick()
-        {
-            _timer = new Timer(0.05);
-            _timer.Elapsed += (sender, args) =>
-            {
-                //Tick()
-            };
-            _timer.Start();
-        }
-
-        public void EndInternalTick()
-        {
-            _timer.Stop();
-            _timer = null;
-        }
-
-        private void viewport_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            _timer?.Stop();
-        }
-
-        private void viewport_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            _timer?.Start();
-        }
-
-        #endregion
-
+        
         public void Tick(TimeSpan delta)
         {
             foreach (var key in _robot.MotorContoller.Keys)
@@ -77,7 +46,7 @@ namespace Simulator.Control3D
 
                 if (m.Thrust == 0)
                 {
-                    arrow.Visible = false;
+                    arrow.Visible = true;
                 }
                 else if (m.Thrust > 0)
                 {
@@ -95,7 +64,7 @@ namespace Simulator.Control3D
                 }
             }
 
-            //viewport.CameraController.CameraTarget = _robot.Model.Transform.Value.Transform(_robot.CenterOfMass);
+            viewport.CameraController.CameraTarget = _robot.Model.Transform.Value.Transform(_robot.CenterOfMass);
 
             _physics.Tick(delta);
         }
@@ -109,8 +78,8 @@ namespace Simulator.Control3D
             viewport.Children.Add(new DefaultLights());
             viewport.Children.Add(new GridLinesVisual3D()
             {
-                Width = 30,
-                Length = 30,
+                Width = 50,
+                Length = 50,
                 Thickness = 0.1,
                 MajorDistance = 1,
                 MinorDistance = 1
@@ -145,15 +114,13 @@ namespace Simulator.Control3D
                 viewport.Children.Add(v);
             }
 
-
             _physics = new BulletPhysicsSimulator();
-            var bullet = ((BulletPhysicsSimulator) _physics);
 
-            var info = new PhysicsInfo(){ CenterOfMass = _robot.CenterOfMass, Mass = _robot.Mass};
-            bullet.AddBody(_robot.Model, info);
-            foreach (var thrustArrowsValue in _thrustArrows.Values)
+            _physics.SetPrimaryBody(_robot.Model, (float)_robot.Mass, _robot.CenterOfMass, new Vector3D(0,0,20));
+
+            foreach (var arr in _thrustArrows.Values)
             {
-                bullet.AddBody(thrustArrowsValue.Model, info);
+                _physics.AddLinkedBody(arr.Model);
             }
         }
 

@@ -95,6 +95,16 @@ namespace Simulator.Util
             return new Vector3((float)v.X, (float)v.Y, (float)v.Z);
         }
 
+        public static Point3D ToMedia3D(this Point3D v)
+        {
+            return new Point3D(v.X, v.Y, v.Z);
+        }
+
+        public static Point3D ToBullet(this Point3D v)
+        {
+            return new Point3D((float)v.X, (float)v.Y, (float)v.Z);
+        }
+
         public static Matrix3D ToMedia3D(this Matrix v)
         {
             return new Matrix3D(

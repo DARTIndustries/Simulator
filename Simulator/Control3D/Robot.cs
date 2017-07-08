@@ -18,7 +18,7 @@ namespace Simulator.Control3D
 
         public Point3D CenterOfMass { get; set; }
 
-        public int Mass { get; set; }
+        public double Mass { get; set; }
 
         public static Robot LoadFromFile(string path)
         {
@@ -42,6 +42,7 @@ namespace Simulator.Control3D
                 }
 
                 model = importer.Load(Path.Combine(temp, cfg.ModelFile));
+
             }
             else if (path.EndsWith(".json"))
             {
@@ -58,8 +59,7 @@ namespace Simulator.Control3D
             {
                 controller.Register(motor.Key, new Motor(motor.Vector)
                 {
-                    LabelLocation = motor.LabelLocation,
-                    ThrustLocation = motor.ThrustLocation
+                    ThrustLocation = motor.Location
                 });
             }
 

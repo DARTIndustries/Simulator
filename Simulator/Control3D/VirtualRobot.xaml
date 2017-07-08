@@ -7,7 +7,7 @@
              xmlns:h="http://helix-toolkit.org/wpf"
              mc:Ignorable="d" MinHeight="300" MinWidth="300">
     <Grid>
-        <h:HelixViewport3D x:Name="viewport" Background="CornflowerBlue" CalculateCursorPosition="True" PreviewMouseRightButtonDown="viewport_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="viewport_PreviewMouseRightButtonUp" ShowFrameRate="True" ShowCoordinateSystem="True" IsMoveEnabled="False" />
+        <h:HelixViewport3D x:Name="viewport" Background="CornflowerBlue" CalculateCursorPosition="True" ShowFrameRate="True" ShowCoordinateSystem="True" IsMoveEnabled="False" />
         <StackPanel Visibility="{x:Static util:DebugMode.DebugVisibility}" Orientation="Horizontal">
 
             <Grid x:Name="CursorPositionBlock" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" Margin="10,0,0,0"  Opacity="1" IsHitTestVisible="True">

@@ -111,14 +111,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Control3D\Physics\IPhysicsBody.cs" />
     <Compile Include="Control3D\Physics\BulletPhysicsSimulator.cs" />
-    <Compile Include="Control3D\Physics\IPhysicsSimulator.cs" />
     <Compile Include="Control3D\Physics\Physics.cs" />
     <Compile Include="Control3D\MotorContoller.cs" />
-    <Compile Include="Control3D\Physics\PhysicsModel3D.cs" />
-    <Compile Include="Control3D\Physics\PhysicsModelGroup.cs" />
-    <Compile Include="Control3D\Physics\PhysicsSimulator.cs" />
     <Compile Include="Control3D\VirtualRobot.xaml.cs">
       <DependentUpon>VirtualRobot.xaml</DependentUpon>
     </Compile>

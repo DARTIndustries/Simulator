@@ -8,8 +8,6 @@ namespace Simulator.Serialization
 
         public Vector3D Vector { get; set; }
 
-        public Point3D LabelLocation { get; set; }
-
-        public Point3D ThrustLocation { get; set; }
+        public Point3D Location { get; set; }
     }
 }

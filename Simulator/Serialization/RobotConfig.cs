@@ -13,6 +13,6 @@ namespace Simulator.Serialization
 
         public Point3D CenterOfMass { get; set; }
 
-        public int Mass { get; set; }
+        public double Mass { get; set; }
     }
 }

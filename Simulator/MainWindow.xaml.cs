@@ -43,6 +43,7 @@ namespace Simulator
 
             _timer = new Timer(1);
             _timer.Elapsed += TOnElapsed;
+            //_timer.Start();
         }
 
 
@@ -101,14 +102,14 @@ namespace Simulator
                         controller["Left"].Thrust = SByte.MaxValue;
                     else if (Keyboard.IsKeyDown(Key.Z))
                         controller["Left"].Thrust = SByte.MinValue;
-                    else
+                    else if (Keyboard.IsKeyDown(Key.A))
                         controller["Left"].Thrust = 0;
 
                     if (Keyboard.IsKeyDown(Key.E))
                         controller["Right"].Thrust = SByte.MaxValue;
                     else if (Keyboard.IsKeyDown(Key.C))
                         controller["Right"].Thrust = SByte.MinValue;
-                    else
+                    else if(Keyboard.IsKeyDown(Key.D))
                         controller["Right"].Thrust = 0;
 
                     virtualRobot.Tick(diff);
